@@ -1,0 +1,286 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>JERRY // Neural Command Interface</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;600&family=Fira+Code:wght@300;400;500&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <style>
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        background-color: #000000;
+        color: #e2e8f0;
+        font-family: 'Inter', sans-serif;
+        overflow: hidden;
+      }
+      .font-orbitron { font-family: 'Orbitron', sans-serif; }
+      .font-mono { font-family: 'Fira Code', 'Share Tech Mono', monospace; }
+      .font-hack { font-family: 'Share Tech Mono', monospace; }
+
+      /* Matrix Rain Background */
+      .matrix-bg {
+        position: fixed;
+        inset: 0;
+        background: 
+          radial-gradient(ellipse at 50% 0%, rgba(6, 182, 212, 0.15) 0%, transparent 50%),
+          radial-gradient(ellipse at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 40%),
+          radial-gradient(ellipse at 20% 90%, rgba(16, 185, 129, 0.08) 0%, transparent 40%),
+          linear-gradient(180deg, #000000 0%, #020617 50%, #000000 100%);
+        z-index: -3;
+      }
+
+      /* Cyber Grid */
+      .cyber-grid {
+        position: fixed;
+        inset: 0;
+        background-image: 
+          linear-gradient(rgba(6, 182, 212, 0.03) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(6, 182, 212, 0.03) 1px, transparent 1px);
+        background-size: 50px 50px;
+        mask-image: radial-gradient(ellipse at center, black 20%, transparent 70%);
+        z-index: -2;
+        animation: gridPulse 4s ease-in-out infinite;
+      }
+
+      @keyframes gridPulse {
+        0%, 100% { opacity: 0.4; }
+        50% { opacity: 0.8; }
+      }
+
+      /* Hexagon Pattern Overlay */
+      .hex-overlay {
+        position: fixed;
+        inset: 0;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%2306b6d4' fill-opacity='0.02'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        z-index: -1;
+        pointer-events: none;
+      }
+
+      .glow-cyan { box-shadow: 0 0 30px rgba(6, 182, 212, 0.5), 0 0 60px rgba(6, 182, 212, 0.2); }
+      .glow-text-cyan { text-shadow: 0 0 10px rgba(6, 182, 212, 0.9), 0 0 20px rgba(6, 182, 212, 0.5), 0 0 40px rgba(6, 182, 212, 0.3); }
+      .glow-text-purple { text-shadow: 0 0 10px rgba(139, 92, 246, 0.9), 0 0 20px rgba(139, 92, 246, 0.5); }
+      .glow-text-green { text-shadow: 0 0 10px rgba(16, 185, 129, 0.9), 0 0 20px rgba(16, 185, 129, 0.5); }
+      
+      @keyframes pulse-ring {
+        0% { transform: scale(0.33); opacity: 0.8; }
+        80%, 100% { opacity: 0; }
+      }
+      .animate-ring {
+        animation: pulse-ring 3s cubic-bezier(0.215, 0.61, 0.355, 1) infinite;
+      }
+
+      /* Glitch Effect */
+      @keyframes glitch {
+        0%, 90%, 100% { transform: translate(0); }
+        91% { transform: translate(-2px, 1px); }
+        92% { transform: translate(2px, -1px); }
+        93% { transform: translate(-1px, -1px); }
+        94% { transform: translate(1px, 1px); }
+      }
+      .glitch-text { animation: glitch 3s infinite; }
+      
+      @keyframes glitchClip {
+        0%, 100% { clip-path: inset(0 0 0 0); }
+        5% { clip-path: inset(20% 0 60% 0); }
+        10% { clip-path: inset(50% 0 30% 0); }
+        15% { clip-path: inset(10% 0 70% 0); }
+        20% { clip-path: inset(0 0 0 0); }
+      }
+
+      /* Neon Border Animation */
+      @keyframes borderGlow {
+        0%, 100% { border-color: rgba(6, 182, 212, 0.3); box-shadow: 0 0 5px rgba(6, 182, 212, 0.2), inset 0 0 5px rgba(6, 182, 212, 0.1); }
+        50% { border-color: rgba(6, 182, 212, 0.6); box-shadow: 0 0 20px rgba(6, 182, 212, 0.4), inset 0 0 10px rgba(6, 182, 212, 0.2); }
+      }
+      .neon-border { animation: borderGlow 2s ease-in-out infinite; }
+
+      /* Data Stream Effect */
+      @keyframes dataStream {
+        0% { background-position: 0 0; }
+        100% { background-position: 0 100%; }
+      }
+
+      .glass-card {
+        background: linear-gradient(135deg, rgba(6, 12, 24, 0.9) 0%, rgba(2, 6, 23, 0.95) 100%);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(6, 182, 212, 0.2);
+        box-shadow: 
+          0 0 1px rgba(6, 182, 212, 0.5),
+          0 8px 32px 0 rgba(0, 0, 0, 0.9),
+          inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      }
+
+      .glass-card-dark {
+        background: linear-gradient(135deg, rgba(0, 0, 0, 0.95) 0%, rgba(2, 6, 23, 0.9) 100%);
+        backdrop-filter: blur(30px);
+        border: 1px solid rgba(6, 182, 212, 0.15);
+        box-shadow: 
+          0 0 1px rgba(6, 182, 212, 0.3),
+          0 20px 60px 0 rgba(0, 0, 0, 0.95),
+          inset 0 1px 0 rgba(255, 255, 255, 0.03);
+      }
+
+      /* Holo Card Effect */
+      .holo-card {
+        position: relative;
+        overflow: hidden;
+      }
+      .holo-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: linear-gradient(
+          45deg,
+          transparent 40%,
+          rgba(6, 182, 212, 0.03) 45%,
+          rgba(6, 182, 212, 0.05) 50%,
+          rgba(6, 182, 212, 0.03) 55%,
+          transparent 60%
+        );
+        animation: holoShine 6s linear infinite;
+        pointer-events: none;
+      }
+      @keyframes holoShine {
+        0% { transform: translateX(-100%) rotate(45deg); }
+        100% { transform: translateX(100%) rotate(45deg); }
+      }
+
+      /* Custom Scrollbar */
+      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.3); }
+      ::-webkit-scrollbar-thumb { 
+        background: linear-gradient(180deg, rgba(6, 182, 212, 0.4), rgba(139, 92, 246, 0.4)); 
+        border-radius: 10px; 
+      }
+      ::-webkit-scrollbar-thumb:hover { background: linear-gradient(180deg, rgba(6, 182, 212, 0.6), rgba(139, 92, 246, 0.6)); }
+
+      /* Scanline Effect */
+      .scanlines {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: repeating-linear-gradient(
+          0deg,
+          rgba(0, 0, 0, 0.15) 0px,
+          rgba(0, 0, 0, 0.15) 1px,
+          transparent 1px,
+          transparent 2px
+        );
+        pointer-events: none;
+        z-index: 9999;
+        opacity: 0.4;
+      }
+
+      /* CRT Flicker */
+      @keyframes flicker {
+        0%, 100% { opacity: 0.97; }
+        50% { opacity: 1; }
+      }
+      .crt-flicker { animation: flicker 0.15s infinite; }
+
+      /* Terminal Typing Cursor */
+      @keyframes blink {
+        0%, 50% { opacity: 1; }
+        51%, 100% { opacity: 0; }
+      }
+      .cursor-blink { animation: blink 1s infinite; }
+
+      /* Floating Particles */
+      @keyframes float {
+        0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+        50% { transform: translateY(-20px) rotate(180deg); opacity: 0.8; }
+      }
+
+      /* Status Indicator Pulse */
+      @keyframes statusPulse {
+        0%, 100% { box-shadow: 0 0 5px currentColor, 0 0 10px currentColor; }
+        50% { box-shadow: 0 0 15px currentColor, 0 0 30px currentColor, 0 0 45px currentColor; }
+      }
+      .status-pulse { animation: statusPulse 2s ease-in-out infinite; }
+
+      /* Corner Accents */
+      .corner-accent {
+        position: relative;
+      }
+      .corner-accent::before,
+      .corner-accent::after {
+        content: '';
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        border-color: rgba(6, 182, 212, 0.5);
+        border-style: solid;
+        border-width: 0;
+      }
+      .corner-accent::before {
+        top: -1px;
+        left: -1px;
+        border-top-width: 2px;
+        border-left-width: 2px;
+      }
+      .corner-accent::after {
+        bottom: -1px;
+        right: -1px;
+        border-bottom-width: 2px;
+        border-right-width: 2px;
+      }
+
+      /* Typing Effect for Text */
+      @keyframes typewriter {
+        from { width: 0; }
+        to { width: 100%; }
+      }
+
+      /* Scan Line Moving */
+      @keyframes scan {
+        0% { top: -10%; }
+        100% { top: 110%; }
+      }
+      .scan-line {
+        position: absolute;
+        width: 100%;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, rgba(6, 182, 212, 0.3), transparent);
+        animation: scan 3s linear infinite;
+        pointer-events: none;
+      }
+
+      /* Data Flow Animation */
+      @keyframes dataFlow {
+        0% { transform: translateY(-100%); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(100%); opacity: 0; }
+      }
+    </style>
+
+  <script type="importmap">
+{
+  "imports": {
+    "react/": "https://esm.sh/react@^19.2.4/",
+    "react": "https://esm.sh/react@^19.2.4",
+    "@google/genai": "https://esm.sh/@google/genai@^1.40.0",
+    "react-dom/": "https://esm.sh/react-dom@^19.2.4/"
+  }
+}
+</script>
+  <script type="module" crossorigin src="/assets/index-D-deowVz.js"></script>
+</head>
+  <body class="crt-flicker">
+    <div class="matrix-bg"></div>
+    <div class="cyber-grid"></div>
+    <div class="hex-overlay"></div>
+    <div class="scanlines"></div>
+    <div id="root"></div>
+</body>
+</html>

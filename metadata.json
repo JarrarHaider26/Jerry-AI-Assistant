@@ -1,0 +1,8 @@
+
+{
+  "name": "Jerry - AI Jarvis Assistant",
+  "description": "A sophisticated, voice-activated Jarvis-style assistant that features real-time voice interaction, futuristic HUD UI, and simulated OS control capabilities.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
